@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	body, html{width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+		#allmap{float:right;height:100%;width:85%;}
+		#r_menu{width:100%;}
+		#div1{float:right;height:100%;width:15%;}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=9BdvNu2ghC6C9Hm33tMSbqe6tjUxN0Qu"></script>
+	<title>后台地图显示</title>
+</head>
+<style>
+.bnt
+{
+	background:#cccccc;  
+	color:#0066ff;  
+	font:宋体;
+	font-size:18px;
+	font-weight:bold;
+	width:100%;
+	margin-top:5px;
+}
+.ipt
+{
+	background:#cccccc;
+	color:#0066ff;
+	font:宋体;
+	font-size:20px;
+	font-weight:bold;
+}
+.ipt1
+{
+	background:#ffee99;
+	color:#0066ff;
+	font:宋体;
+	font-size:20px;
+	font-weight:bold;	
+}
+.txt
+{
+	color:#0066ff;
+	font:宋体;
+	font-size:20px;
+	font-weight:bold;	
+}
+#table thead, #table-2 tr
+{
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: rgb(230, 189, 189);
+}
+#table 
+{
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: rgb(230, 189, 189);
+}
+
+/* Padding and font style */
+#table td, #table-2 th 
+{
+	padding: 5px 10px;
+	font-size: 16px;
+	font-family: Verdana;
+	color:#000000;
+	font-weight:bold;
+}
+
+/* Alternating background colors */
+#table tr:nth-child(even) 
+{
+	background: #cccccc
+}
+#table tr:nth-child(odd) 
+{
+	background: #ffee99
+}
+</style>
+<body>
+<div id = 'div1' style = "background:#cceeff;">
+	<div style = "text-align:center;margin-top:20px;" >
+		<table id = 'table' >
+			<tr>
+				<text class = 'txt' style = "color:#9933cc">行车信息显示</text>
+			</tr>			
+			<tr>
+				<td><text class = 'txt'>carID</text></td>
+				<td><input type = "text" class = 'ipt1' id = "carID" size = 10 value = "000" /></td>
+			</tr>
+			<tr>
+				<td><text class = 'txt'>longitude</text></td>
+				<td><input type = "text" class = 'ipt1' id = "longitude" size = 10 value = "000" /><td>
+			</tr>
+			<tr>
+				<td><text class = 'txt'>latitude</text></td>
+				<td><input type = "text" class = 'ipt1' id = "latitude" size = 10 value = "000" /></td>
+			</tr>
+			<tr>
+				<td><text class = 'txt'>speed</text></td>
+				<td><input type = "text" class = 'ipt1' id = "speed" size = 10 value = "000" /></td>
+			</tr>
+			<tr>
+				<td><text class = 'txt'>heading</text></td>
+				<td><input type = "text" class = 'ipt1' id = "heading" size = 10 value = "000" /></td>
+			</tr>
+			<tr>
+				<td><text class = 'txt'>wheelAngle</text></td>
+				<td><input type = "text" class = 'ipt1' id = "wheelAngle" size = 10 value = "000" /></td>
+			</tr>
+		</table>
+	</div>
+
+
+
+	<div style = "text-align:center;margin-top:30px;" >
+		<table style = "width:100%;">
+			<tr>
+				<text class = 'txt' style = "color:#9933cc">功能模块</text>
+			</tr>	
+			<tr>
+				<td><button type = "button" class = "bnt" onclick = "showAllMarkers()">显示markers</button></td>
+			</tr>
+			<tr>
+				<td><button type = "button" class = "bnt" onclick = "clearAllMarkers()">关闭markers</button></td>
+			</tr>
+			<tr>
+				<td><button type = "button" class = "bnt" onclick = "showInfoWindows()">显示所有信息窗体</button></td>
+			</tr>
+			<tr>
+				<td><button type = "button" class = "bnt" onclick = "clearInfoWindows()">关闭所有信息窗体</button></td>
+			</tr>
+			<tr>
+				<td><button type = "button" class = "bnt" onclick = "openPickupCor()">坐标拾取</button></td>
+			</tr>
+			<tr>
+				<td><button type = "button" class = "bnt" onclick = "openMearsureDis()">鼠标测距</button></td>
+			</tr>
+		</table>
+	</div>
+	<div style = "margin-top:30px;width:100%;">
+		<div style = "width:100%;text-align:center;">
+			<text class = 'txt' style = "color:#9933cc;text-align:center;">坐标拾取器</text>
+		</div>	
+		<input type = "text" style = "width:100%;text-align:center;" class = "ipt" name = "lng_lat" id = "lng_lat" />
+	</div>
+<!--	<div style = "position:absolute;bottom:30px;">
+		<div style = "width:100%;text-align:center;">
+			<text style = "font-size:20px;font-weight:bold;color:#ff6666;font:微软雅黑;text-align:center;">同济大学</text>
+		</div>
+		<div style = "width:100%;text-align:center;">
+			<text style = "font-size:20px;font-weight:bold;color:#ff6666;font:微软雅黑;text-align:center;">信息与通信工程系</text>
+		</div>
+		<div style = "width:100%;text-align:center;">
+			<text style = "font-size:20px;font-weight:bold;color:#ff6666;font:微软雅黑;text-align:center;">宽带无线通信与多媒体实验室</text>
+		</div>
+-->
+	</div>
+</div>
+<div id="allmap"></div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
+<script type="text/javascript">
+/**同济大学电子与信息工程学院
+ * 信息与通信工程系 宽带无线通信与多媒体实验室
+ * made by 孙宇轩（yasin）
+ */
+	 
+	/**
+	 * @brief 加载地图并初始化地图，同时完成基础功能的设置
+	 */
+	var map = new BMap.Map("allmap");    
+	map.centerAndZoom(new BMap.Point(121.218683, 31.294147), 18);
+	map.setCurrentCity("上海");      
+	map.enableScrollWheelZoom(true);    
+	map.disableDoubleClickZoom(true);
+	map.enableKeyboard(true);
+	
+	var top_left_navigation = new BMap.NavigationControl({anchor:BMAP_ANCHOR_TOP_LEFT,type:BMAP_NAVIGATION_CONTROL_SMALL});
+	map.addControl(top_left_navigation);
+	
+	var mapType = new BMap.MapTypeControl({anchor:BMAP_ANCHOR_TOP_RIGHT});
+	map.addControl(mapType);
+	//map.disableDragging();
+	
+	document.getElementById("lng_lat").value = "121.218683 ，31.294147";//坐标拾取器的显示
+
+/* ------------------------------------------------------------ */
+	
+	
+	/**
+	 * @brief 程序用到的一些基本变量的定义
+	 */
+	var selfID = 71562;//用于标识selfCar,id由自车决定
+	var clickedID = -2;//默认都未点击
+	var timeStamps = new Array();
+	var flag = 0;//接受到的第一个消息作为自车
+	var myIcon = new BMap.Icon("selfMarker.gif",new BMap.Size(30,30));//自定义图标
+	var selfPoint = new BMap.Point(121.218683, 31.294147);
+	var centerPoint = new BMap.Point(121.218683, 31.294147);//地图的中心点
+	var points = new Array();
+	var selfMarker = new BMap.Marker(selfPoint,{icon:myIcon});
+	var markers = new Array();
+	var selfInfoWindow = new BMap.InfoWindow("<table class = 'table'>" + "<tr><td>尚未收到自车相关数据!</td></tr>" + "</table>");
+	var infoWindows = new Array();
+	var selfInfo = new Array(6);
+	var infos = new Array();
+
+	
+	selfMarker.setTitle("ID : "+selfID);
+	selfMarker.addEventListener("click",function(){this.openInfoWindow(selfInfoWindow);
+		clickedID = -1;//点击自车;				
+	});
+	map.addOverlay(selfMarker);
+
+	
+/* ------------------------------------------------------------ */
+	
+	
+	/**
+	 * @brief 添加鼠标选点测距功能，API有问题，暂时先不实现
+	 */
+
+/* ------------------------------------------------------------ */
+
+
+/**
+ * @brief 鼠标单击坐标拾取;地图注册鼠标单击事件
+ */
+	function pickupCor(e)
+	{
+		document.getElementById("lng_lat").value ="[" + e.point.lng+" , " + e.point.lat + "]";
+	}
+
+	function measureDis()
+	{	
+		var myDis = new BMapLib.DistanceTool(map);
+		myDis.open();
+	}
+
+	function openPickupCor()
+	{
+		map.addEventListener("click",pickupCor);
+	}
+
+	function openMearsureDis()
+	{	
+		map.addEventListener("rightclick",measureDis);
+	}
+
+/* ---------------------------坐标转换------------------------ */
+/* 百度转换函数是加密的,只能远程调用,有较大时延,且限制调用次数,不方便使用 */
+/* 自己实现WGS48坐标到BD09坐标的转换,可能有一定误差 */
+
+
+
+	function transformlat(lng, lat) {
+  		var PI = 3.1415926535897932384626;
+
+        	var lat = +lat;
+        	var lng = +lng;
+    		var ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.1 * lng * lat + 0.2 * Math.sqrt(Math.abs(lng));
+   		 ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0;
+   		 ret += (20.0 * Math.sin(lat * PI) + 40.0 * Math.sin(lat / 3.0 * PI)) * 2.0 / 3.0;
+   		 ret += (160.0 * Math.sin(lat / 12.0 * PI) + 320 * Math.sin(lat * PI / 30.0)) * 2.0 / 3.0;
+   		 return ret
+  	};
+
+	function transformlng(lng, lat) {
+  		var PI = 3.1415926535897932384626;
+
+        	var lat = +lat;
+    		var lng = +lng;
+    		var ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.1 * lng * lat + 0.1 * Math.sqrt(Math.abs(lng));
+    		ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0;
+    		ret += (20.0 * Math.sin(lng * PI) + 40.0 * Math.sin(lng / 3.0 * PI)) * 2.0 / 3.0;
+    		ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0;
+    		return ret
+  	};
+
+	function wgs84togcj02(point) {
+  		var PI = 3.1415926535897932384626;
+  		var a = 6378245.0;
+  		var ee = 0.00669342162296594323;
+
+   		var lat = +point.lat;
+    		var lng = +point.lng;
+     		var dlat = transformlat(lng - 105.0, lat - 35.0);
+      		var dlng = transformlng(lng - 105.0, lat - 35.0);
+      		var radlat = lat / 180.0 * PI;
+      		var magic = Math.sin(radlat);
+      		magic = 1 - ee * magic * magic;
+      		var sqrtmagic = Math.sqrt(magic);
+      		dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI);
+      		dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI);
+      		var mglat = lat + dlat;
+      		var mglng = lng + dlng;
+      		return new BMap.Point(mglng,mglat);
+  	};
+
+	function gcj02tobd09(point) {
+		var x_PI = 3.14159265358979324 * 3000.0 / 180.0;
+
+       		var lat = +point.lat;
+    		var lng = +point.lng;
+    		var z = Math.sqrt(lng * lng + lat * lat) + 0.00002 * Math.sin(lat * x_PI);
+    		var theta = Math.atan2(lat, lng) + 0.000003 * Math.cos(lng * x_PI);
+    		var bd_lng = z * Math.cos(theta) + 0.0065;
+    		var bd_lat = z * Math.sin(theta) + 0.006;
+    		return new BMap.Point(bd_lng,bd_lat);
+  	};
+
+	function transformCoord(point)//最终函数,讲WGS48转换为BD09;
+	{
+		var tempPoint = wgs84togcj02(point);
+		return gcj02tobd09(tempPoint);
+	}
+
+
+/* ----------------------------------------------------------- */
+
+/**
+ * @brief 右键菜单栏，给出一些常用的功能
+ 
+	var menu = new BMap.ContextMenu();
+	var txtMenuItem = 
+	[
+		{
+			text:'清除所有标记',
+			callback:clearAllMarkers
+		},
+		{
+			text:'关闭所有窗体',
+			callback:closeInfoWindows
+		}//,
+		//{
+		//	text:'打开点聚合';
+		//	callback:openConfluc
+		//}，
+		//{
+		//	text:'关闭点聚合',
+		//	callback:closeConflux
+		//}
+		//{
+		//	text:'打开鼠标测距',
+		//	callback:openMeasureDis
+		//},
+		//{
+		//	text:'关闭鼠标测距',
+		//	callback:closeMeasureDis
+		//}
+		
+	];
+	
+	for(var i = 0;i < txtMenuItem.length;i++)//添加菜单
+	{
+		menu.addItem(new BMap.MenuItem(txtMenuItem[i].text,txtMenuItem[i].callback,100));
+	}
+	map.addContextMenu(menu);
+*/
+	
+	//function openConfluc(){
+	
+	//}
+	
+	//function closeConflux(){
+	
+	//}
+	
+	//function openMeasureDis(){
+	
+	//}
+	
+	//function closeMeasureDis(){
+	
+	//}
+
+
+	function showAllMarkers()
+	{
+		map.addOverlay(selfMarker);
+		for(var j = 0;j < markers.length;j++){
+			map.addOverlay(markers[j]);
+		}
+	}
+
+	function clearAllMarkers()
+	{
+		selfInfoWindow.close();
+		for(var j = 0;j < infoWindows.length;j++){
+			infoWindows[j].close();
+		}
+		map.removeOverlay(selfMarker);
+		for(var j = 0;j<markers.length;j++){
+			map.removeOverlay(markers[j]);
+		}
+	}
+	
+	function showInfoWindows()
+	{
+		showAllMarkers();
+		selfMarker.openInfoWindow(selfInfoWindow);
+		for(var j = 0;j < markers.length;j++){
+			markers[j].openInfoWindow(infoWindows[j]);
+		}
+	}
+
+	function clearInfoWindows()
+	{
+		selfMarker.closeInfoWindow();
+		for(var j = 0;j < markers.length;j++){
+			markers[j].closeInfoWindow();
+		}
+	}
+
+/* ---------------------------------------------------------- */
+
+
+	/**
+	 * @brief 主业务逻辑实现 之 通信部分
+	 */
+	if(window.WebSocket){
+		console.log('this browser support Websocket');
+	}else{
+		console.log('this browser does not support Websocket');
+	}	
+	
+	var wsURI = 'ws://127.0.0.1:8080';
+	var ws = new WebSocket(wsURI);
+	var reConnection = 0;
+	window.setInterval("removeTimeOutCar()",2000);//设定定时任务,用于清除失联的车辆
+	ws.onopen = function(e){ onOpen(e); };//注册回调函数
+	ws.onclose = function(e){ onClose(e); };
+	ws.onmessage = function(e){ onMessage(e); };
+	ws.onerror = function(e){ onError(e); };
+
+
+	function onOpen(e)
+	{
+		reConnection = 0;
+		console.log("已经建立连接");
+	}
+	
+	function onClose(e)
+	{
+		console.log("已经关闭连接");
+	}
+/**
+  * @brief 接收数据并调用处理函数
+  */
+	function onMessage(e)
+	{
+		//console.log("get message from server");
+		//console.log(e);
+		
+		try
+		{
+			var jsonObj = JSON.parse(e.data);
+		}catch(err){
+			console.log("error:parse json error");
+		}
+
+		try{	
+			handleMessage(jsonObj);
+		}catch(err){
+			console.log("error:handle message error!");
+		}
+	}
+	
+	function onError(e)
+	{
+		if(reConnection < 20){
+			reConnection++;
+			console.log("error:连接发生错误："+e.data);
+			ws = new WebSocket(wsURI);
+			ws.onopen = function(e){ onOpen(e); };//注册回调函数
+			ws.onclose = function(e){ onClose(e); };
+			ws.onmessage = function(e){ onMessage(e); };
+			ws.onerror = function(e){ onError(e); };
+		}
+		//alert("链接发生错误,请重试!");
+	}
+	
+	function doSend(message)
+	{
+		ws.send(message);
+	}
+/* ---------------------------------------------------------- */
+	
+	
+	/**
+	 * @brief 主业务逻辑实现 之 消息处理
+	 *  message 打包成JSON格式的数据，其字段依次是：
+	 *  id , longitude , latitude , speed , heading , wheelAngle  
+	 */
+	 function handleMessage(jsonObj)
+	 {   if(flag == 0){selfID = jsonObj.id; flag = 1;}//将接受到的第一个消息作的车作为自车
+		if(jsonObj.id == selfID)//传来的是自车的message，假设自车id为1
+		{
+			if(map.getDistance(selfPoint,centerPoint)>1000){//更新地图中心点
+				centerPoint = selfPoint;
+				map.panTo(centerPoint);
+			}
+			selfInfo[0] = jsonObj.id;
+			selfInfo[1] = jsonObj.longitude;
+			selfInfo[2] = jsonObj.latitude;
+			selfInfo[3] = jsonObj.speed;
+			selfInfo[4] = jsonObj.heading;
+			selfInfo[5] = jsonObj.wheelAngle;
+
+			if(clickedID == -1){
+				document.getElementById("carID").value = selfInfo[0] + "";
+				document.getElementById("longitude").value = selfInfo[1] + "";
+				document.getElementById("latitude").value = selfInfo[2] + "";
+				document.getElementById("speed").value = selfInfo[3] + "";
+				document.getElementById("heading").value = selfInfo[4] + "";
+				document.getElementById("wheelAngle").value = selfInfo[5] + "";
+			}
+	
+			
+			selfPoint = new BMap.Point(selfInfo[1],selfInfo[2]);
+			selfPoint = transformCoord(selfPoint);//坐标转换
+			//map.removeOverlay(selfMarker);
+			selfMarker.setPosition(selfPoint);
+			selfMarker.draw();
+			var selfInfoStr = 
+			"<table id = 'table'>"+
+			"<tr> <td>carID</td> <td>" + selfInfo[0] + "</td> </tr>"+
+			"<tr> <td>longitude</td> <td>" + selfInfo[1] + "</td> </tr>"+
+			"<tr> <td>latitude</td> <td>" + selfInfo[2] + "</td> </tr>"+
+			"<tr> <td>speed</td> <td>" + selfInfo[3] + "</td> </tr>"+
+			"<tr> <td>heading</td> <td>" + selfInfo[4] + "</td> </tr>"+
+			"<tr> <td>wheelAngle</td> <td>" + selfInfo[5] + "</td> </tr>"+
+			"</table>";
+			selfInfoWindow.setContent(selfInfoStr);
+			//map.addOverlay(selfMarker);	
+		}
+		else//传来的不是自车的消息
+		{//判断这个车是否已经存在
+			var i = 0;
+			var carNumbers = markers.length;//当前已有车辆数
+			for(;i <markers.length;i++){
+				if(infos[i][0] == jsonObj.id)
+					break;
+			}
+			
+			if(i == markers.length)
+			{//这个车目前还不存在
+				//console.log("a new car found, ID is "+jsonObj.id);
+				//console.log(jsonObj);
+				timeStamps[carNumbers] = new Date().getTime();
+				points[carNumbers] = new BMap.Point(jsonObj.longitude,jsonObj.latitude);
+				points[carNumbers] = transformCoord(points[carNumbers]);//坐标转换
+				markers[carNumbers] = new BMap.Marker(points[carNumbers]);
+				infos[carNumbers] = new Array(6);
+				infos[carNumbers][0] = jsonObj.id;
+				infos[carNumbers][1] = jsonObj.longitude;
+				infos[carNumbers][2] = jsonObj.latitude;
+				infos[carNumbers][3] = jsonObj.speed;
+				infos[carNumbers][4] = jsonObj.heading;
+				infos[carNumbers][5] = jsonObj.wheelAngle;
+
+				var tempInfoStr = 
+				"<table id = 'table'>"+
+				"<tr> <td>carID</td> <td>" + infos[carNumbers][0] + "</td> </tr>"+
+				"<tr> <td>longitude</td> <td>" + infos[carNumbers][1] + "</td> </tr>"+
+				"<tr> <td>latitude</td> <td>" + infos[carNumbers][2] + "</td> </tr>"+
+				"<tr> <td>speed</td> <td>" + infos[carNumbers][3] + "</td> </tr>"+
+				"<tr> <td>heading</td> <td>" + infos[carNumbers][4] + "</td> </tr>"+
+				"<tr> <td>wheelAngle</td> <td>" + infos[carNumbers][5] + "</td> </tr>"+
+				"</table>";
+
+				infoWindows[carNumbers] = new BMap.InfoWindow(tempInfoStr);
+				markers[carNumbers].addEventListener("click",function(){this.openInfoWindow(infoWindows[carNumbers]);
+					for(var j = 0;j < markers.length;j++){
+						if(markers[j] == this){
+							clickedID = j;
+						}
+					}
+				});
+				map.addOverlay(markers[carNumbers]);
+				
+			}
+			else
+			{//这个车已经存在
+				timeStamps[i] = new Date().getTime();
+				points[i] = new BMap.Point(jsonObj.longitude,jsonObj.latitude);
+				points[i] = transformCoord(points[i]);//坐标转换
+				infos[i][0] = jsonObj.id;
+				infos[i][1] = jsonObj.longitude;
+				infos[i][2] = jsonObj.latitude;
+				infos[i][3] = jsonObj.speed;
+				infos[i][4] = jsonObj.heading;
+				infos[i][5] = jsonObj.wheelAngle;
+			
+				if(clickedID == i){
+					document.getElementById("carID").value = infos[i][0] + "";
+					document.getElementById("longitude").value = infos[i][1] + "";
+					document.getElementById("latitude").value = infos[i][2] + "";
+					document.getElementById("speed").value = infos[i][3] + "";
+					document.getElementById("heading").value = infos[i][4] + "";
+					document.getElementById("wheelAngle").value = infos[i][5] + "";
+				}
+	
+				var tempInfoStr = 
+				"<table id = 'table'>"+
+				"<tr> <td>carID</td> <td>" + infos[i][0] + "</td> </tr>"+
+				"<tr> <td>longitude</td> <td>" + infos[i][1] + "</td> </tr>"+
+				"<tr> <td>latitude</td> <td>" + infos[i][2] + "</td> </tr>"+
+				"<tr> <td>speed</td> <td>" + infos[i][3] + "</td> </tr>"+
+				"<tr> <td>heading</td> <td>" + infos[i][4] + "</td> </tr>"+
+				"<tr> <td>wheelAngle</td> <td>" + infos[i][5] + "</td> </tr>"+
+				"</table>";
+			
+				//map.removeOverlay(markers[i]);
+				markers[i].setPosition(points[i]);
+				markers[i].draw();
+				infoWindows[i].setContent(tempInfoStr);
+				//map.addOverlay(markers[i]);
+			}
+		}
+	 }
+/**
+  * @brief 定时任务,每隔一定时间就检验所有车,上一次收到相应车的消息的时间,如果太久没收到,就将车辆
+  *        以及相应的数组的信息都删除掉
+  */
+	function removeTimeOutCar()
+	{
+		var now = new Date().getTime();
+		for(var j = 0;j < timeStamps.length;j++)
+		{
+			if((now - timeStamps[j]) >4500)
+			{
+				map.removeOverlay(markers[j])
+				points.splice(j,1);
+				markers.splice(j,1);
+				infoWindows.splice(j,1);
+				infos.splice(j,1);	
+				timeStamps.splice(j,1);	
+				console.log("a car have lost");	
+				console.log("other cars number is "+markers.length);	
+			}
+		}
+	}
+/* --------------------------------------------------------- */
+
+	
+</script>
